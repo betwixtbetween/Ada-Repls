@@ -1,0 +1,91 @@
+=begin
+Ticket and food sales tracker for use by Ada State Fair Management
+Asks user to input ticket and concessions purchases for each party
+Outputs a summary for each party and then the total ticket and concessions sales
+Note on future use: This currently deals with information for up to 3 parties, but more parties can be included by changing the '3' on the first line of the 'while' loop below to your number of parties. And prices and group discounts can be updated by changing the variables below.
+=end
+
+single_ticket_price = 35.00
+ticket_lot_of_4_price = 112.00
+single_ticket_of_4_price = 28.00
+
+cotton_candy_price = 1.25
+small_fries_price = 2.50
+large_fries_price = 4.00
+
+total_sales = 0.00
+total_concessions_sales = 0.00
+
+party_summaries = []
+sales = []
+
+party_number = 1
+spendiest_party_index = 0
+
+puts "I hope it's a good day at the fair! Here's your ticket and food sales tracker."
+puts "\n"
+sleep 2
+
+while party_number <= 3
+  
+  print "How many tickets did party ##{party_number} buy?"
+  current_party = {tickets: gets.chomp}
+
+  current_party[:ticket_sales] = ((current_party[:tickets].to_i / 4) * ticket_lot_of_4_price.to_i) + ((current_party[:tickets].to_i % 4) * single_ticket_price.to_i)
+
+  print "How many servings of cotton candy did party ##{party_number} buy?"
+  
+  current_party[:cotton_candy] = gets.chomp
+  current_party[:cotton_candy_sales] = current_party[:cotton_candy].to_f * cotton_candy_price.to_f
+
+  puts "How many servings of curly fries did party ##{party_number} buy?"
+
+  print "   Small:"
+  current_party[:small_fries] = gets.chomp
+  current_party[:small_fries_sales] = current_party[:small_fries].to_f * small_fries_price.to_f
+
+  print "   Large:"
+  current_party[:large_fries] = gets.chomp
+  current_party[:large_fries_sales] = current_party[:large_fries].to_f * large_fries_price.to_f
+
+  puts "\n"
+
+  current_party[:total] = current_party[:ticket_sales] + current_party[:cotton_candy_sales] + current_party[:small_fries_sales] + current_party[:large_fries_sales]
+
+  current_party[:concessions] = current_party[:cotton_candy_sales] + current_party[:small_fries_sales] + current_party[:large_fries_sales]
+  
+  total_sales += current_party[:total]
+
+  total_concessions_sales += current_party[:concessions]
+  
+  party_summaries[(party_number - 1)] = "Party ##{party_number} spent $" + sprintf("%.2f",current_party[:ticket_sales]) + " on tickets and $" + sprintf("%.2f",current_party[:concessions]) + " on concessions for a total of $" + sprintf("%.2f",current_party[:total]) + "."
+
+  sales.push current_party
+
+  if current_party[:total] > sales[spendiest_party_index][:total]
+    spendiest_party_index = party_number - 1
+  end
+
+  party_number += 1
+  
+end
+
+puts "\n"
+puts "---"
+puts "\n"
+
+puts "\n"
+puts "Summary:"
+puts "\n"
+
+party_summaries.each do |summary|
+  puts summary
+end
+
+puts "\n"
+
+puts "The total spent by these parties is $" + sprintf("%.2f", total_sales) + "."
+
+puts "The total they spent on concessions is $" + sprintf("%.2f", total_concessions_sales) + "."
+
+puts "Party ##{spendiest_party_index + 1} spent the most with $" + sprintf("%.2f",sales[spendiest_party_index][:total]) + "."
